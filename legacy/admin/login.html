@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>登录 · 纸页之间后台</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body class="admin-body">
+  <div class="login-wrap">
+    <div class="login-box">
+      <h1>纸页之间</h1>
+      <p class="sub">管理后台 · 仅博主可入</p>
+
+      <form id="login-form">
+        <div class="form-item">
+          <label for="username">用户名</label>
+          <input type="text" id="username" name="username" autocomplete="username" required>
+        </div>
+        <div class="form-item">
+          <label for="password">密码</label>
+          <input type="password" id="password" name="password" autocomplete="current-password" required>
+        </div>
+        <button class="btn btn-primary" type="submit">进入后台</button>
+        <p class="form-hint" style="text-align:center; margin-top:14px;">演示阶段：任意用户名 / 密码即可进入</p>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    /* ============================================================
+       登录提交
+       ------------------------------------------------------------
+       ★ 接口预留位 ★  后端就绪后，替换下方 localStorage 逻辑：
+       ------------------------------------------------------------
+       const res = await fetch("/api/admin/login", {
+         method: "POST",
+         headers: { "Content-Type": "application/json" },
+         body: JSON.stringify({ username, password })
+       });
+       if (!res.ok) { } // 401 → 提示密码错误后 return
+       const { token } = await res.json();
+       localStorage.setItem("token", token);   // 或交给 httpOnly Cookie
+       location.href = "index.html";
+       ============================================================ */
+    document.getElementById("login-form").addEventListener("submit", function (e) {
+      e.preventDefault();
+      // ↓↓↓ 后端就绪后，请在上方取消注释真实请求，并删除下面两行 ↓↓↓
+      localStorage.setItem("paper-pages:admin", "1");
+      location.href = "index.html";
+    });
+  </script>
+</body>
+</html>

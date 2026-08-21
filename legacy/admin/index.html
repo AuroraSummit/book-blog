@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>后台 · 纸页之间</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body class="admin-body">
+  <!-- 顶栏 -->
+  <header class="admin-top">
+    <span class="brand">纸页之间 · 后台</span>
+    <span class="top-links">
+      <a href="../index.html" target="_blank" rel="noopener">回到前台</a>
+      <a href="#" id="logout">退出</a>
+    </span>
+  </header>
+
+  <div class="admin-wrap">
+    <!-- 左侧导航（hash 路由：#/dashboard #/articles #/write #/comments） -->
+    <nav class="admin-side" aria-label="后台导航">
+      <a href="#/dashboard" data-view="dashboard">仪表盘</a>
+      <a href="#/articles" data-view="articles">文章管理</a>
+      <a href="#/write" data-view="write">写文章</a>
+    </nav>
+
+    <!-- 内容区：各视图由 js/admin.js 渲染 -->
+    <main class="admin-main">
+      <section class="admin-view" id="view-dashboard"></section>
+      <section class="admin-view" id="view-articles"></section>
+      <section class="admin-view" id="view-write"></section>
+    </main>
+  </div>
+
+  <!-- 轻提示 -->
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="../js/vendor/echarts.min.js"></script>
+  <script src="../js/data.js"></script>
+  <script src="../js/admin.js"></script>
+</body>
+</html>

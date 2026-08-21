@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="纸页之间 · 关于博主">
+  <title>关于 · 纸页之间</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="about">
+  <!-- 阅读进度条 + 回到顶部 -->
+  <div class="reading-progress" id="reading-progress" role="progressbar" aria-label="阅读进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
+  <button class="back-to-top" id="back-to-top" type="button" aria-label="回到顶部">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M8 13V3"/>
+      <path d="M3.5 7.5 8 3l4.5 4.5"/>
+    </svg>
+  </button>
+
+  <div class="page">
+
+    <header class="site-head">
+      <h1 class="site-name">纸页之间</h1>
+      <p class="site-sub">读书笔记 · 观影感受 · 安静记录</p>
+      <div class="nav-row">
+        <nav class="site-nav" aria-label="站点导航">
+          <a href="index.html">文章</a>
+          <a href="books.html">读书</a>
+          <a href="movies.html">影评</a>
+          <a href="about.html" class="active">关于</a>
+        </nav>
+        <form class="site-search" action="search.html" method="get" role="search">
+          <input type="search" name="q" placeholder="搜文章 / 影评 / 标签" aria-label="站内搜索">
+        </form>
+      </div>
+    </header>
+
+    <main>
+      <section id="about-page" aria-live="polite"></section>
+    </main>
+
+    <footer class="site-foot">
+      <p>纸页之间 · 写于二零二六年</p>
+      <p>用一本安静的书，盛下读过的世界</p>
+    </footer>
+
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/about.js"></script>
+</body>
+</html>

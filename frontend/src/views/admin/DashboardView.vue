@@ -42,17 +42,19 @@ async function renderCharts() {
   })
   charts.push(pc)
 
-  // 标签分布（饼图）
+  // 标签分布（饼图，限制为前 7 + 其他，避免扇区过多）
   const tags = stats.value.tagDistribution || []
   if (tags.length) {
     const tc = echarts.init(document.getElementById('chart-tags'))
     tc.setOption({
-      color: ['#8a6a3d', '#a08a5c', '#6d7f6d', '#9b7e6a', '#7a6a8a', '#b09a7a'],
-      tooltip: { trigger: 'item' },
-      legend: { bottom: 0, textStyle: { color: LABEL, fontSize: 11 } },
+      color: ['#8a6a3d', '#a08a5c', '#6d7f6d', '#9b7e6a', '#7a6a8a', '#b09a7a', '#5d7f8a', '#9a9857'],
+      tooltip: { trigger: 'item', formatter: '{b}：{c} 篇（{d}%）' },
+      legend: { bottom: 0, itemWidth: 12, itemHeight: 12, textStyle: { color: LABEL, fontSize: 11 } },
       series: [{
-        type: 'pie', radius: ['38%', '62%'], center: ['50%', '44%'],
-        label: { color: LABEL, fontSize: 11 },
+        type: 'pie', radius: ['40%', '64%'], center: ['50%', '42%'],
+        itemStyle: { borderRadius: 5, borderColor: '#fff', borderWidth: 1 },
+        label: { color: LABEL, fontSize: 11, formatter: '{b} {c}' },
+        labelLine: { length: 8, length2: 6 },
         data: tags.map((t) => ({ name: t.name, value: t.count }))
       }]
     })

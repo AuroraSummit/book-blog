@@ -97,7 +97,9 @@ public class CommentService {
 
     /* ==================== 后台 ==================== */
 
-    /** 后台评论分页检索（可按状态 / 文章 / 关键词模糊过滤），新评论在前。 */
+    /** 后台评论分页检索（可按状态 / 文章 / 关键词模糊过滤），新评论在前。
+     *  注意：open-in-view=false，必须在此事务内访问懒加载的 article。 */
+    @Transactional(readOnly = true)
     public PageResult<AdminCommentDto> adminList(String status, Long articleId, String keyword, int page, int size) {
         int p = Math.max(page, 1);
         int s = Math.min(Math.max(size, 1), 50);

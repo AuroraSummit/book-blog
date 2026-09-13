@@ -36,6 +36,18 @@ public class StatsService {
         this.tagService = tagService;
     }
 
+    /** 标签分布（仪表盘）：只取前 MAX_TAG 个，其余合并为「其他」，避免饼图过碎。 */
+    private static final int MAX_TAG = 7;
+
+    private List<TagCount> tagDistribution() {
+        List<TagCount> all = tagService.publicTags();
+        if (all.size() <= MAX_TAG) return all;
+        List<TagCount> top = new ArrayList<>(all.subList(0, MAX_TAG));
+        int rest = all.stream().skip(MAX_TAG).mapToInt(TagCount::count).sum();
+        top.add(new TagCount("其他", rest));
+        return top;
+    }
+
     public StatsDto stats() {
         long total = articleRepository.count();
         long books = articleRepository.countByType("reading");
@@ -56,7 +68,7 @@ public class StatsService {
                 publishedByMonth(),
                 mostViewed(),
                 mostLiked(),
-                tagService.publicTags());
+                tagDistribution());
     }
 
     /** 最受欢迎（按阅读数）：全部文章取前 5。 */

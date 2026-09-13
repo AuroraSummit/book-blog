@@ -1,38 +1,23 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { api } from '../../api'
 import PaginationBar from '../../components/PaginationBar.vue'
 
-const statusFilters = [
-  { value: 'all', label: '全部' },
-  { value: 'approved', label: '已通过' },
-  { value: 'pending', label: '待审核' },
-  { value: 'rejected', label: '已驳回' }
-]
-const statusLabel = { approved: '已通过', pending: '待审核', rejected: '已驳回' }
-
-const activeStatus = ref('all')
 const keyword = ref('')
 const page = ref(1)
 const size = 20
 const totalPages = ref(1)
 const list = ref([])
-const counts = ref({ total: 0, pending: 0, approved: 0, rejected: 0 })
 const loading = ref(true)
 const error = ref('')
 const replyFor = ref(null)
 const replyText = ref('')
 const replying = ref(false)
 
-const pendingTip = computed(() =>
-  counts.value.pending > 0 ? `待审核 ${counts.value.pending}` : ''
-)
-
 function load() {
   loading.value = true
   error.value = ''
   api.adminComments({
-    status: activeStatus.value === 'all' ? undefined : activeStatus.value,
     keyword: keyword.value.trim() || undefined,
     page: page.value,
     size
@@ -45,11 +30,6 @@ function load() {
     .finally(() => { loading.value = false })
 }
 
-function loadCounts() {
-  api.adminCommentCounts().then((c) => { counts.value = c }).catch(() => {})
-}
-
-function setStatusFilter(v) { activeStatus.value = v; page.value = 1; load() }
 function search() { page.value = 1; load() }
 function goPage(p) { page.value = p; load() }
 
@@ -65,7 +45,7 @@ async function submitReply() {
   try {
     await api.adminReply({ parentId: replyFor.value.id, content: t })
     toggleReply(replyFor.value)
-    load(); loadCounts()
+    load()
   } catch (e) {
     alert(e.message)
   } finally {
@@ -73,45 +53,25 @@ async function submitReply() {
   }
 }
 
-async function setStatus(c, status) {
-  try {
-    await api.setCommentStatus(c.id, status)
-    load(); loadCounts()
-  } catch (e) {
-    alert(e.message)
-  }
-}
-
 async function remove(c) {
   if (!window.confirm(`确定删除 ${c.author} 的这条评论？此操作不可撤销。`)) return
   try {
     await api.deleteComment(c.id)
-    load(); loadCounts()
+    load()
   } catch (e) {
     alert(e.message)
   }
 }
 
-onMounted(() => { load(); loadCounts() })
+onMounted(load)
 </script>
 
 <template>
   <div>
     <div class="list-head">
-      <h2 class="view-title" style="border-bottom:none;margin-bottom:0;">
-        评论管理
-        <span v-if="pendingTip" class="pending-badge" role="status">{{ pendingTip }}</span>
-      </h2>
+      <h2 class="view-title" style="border-bottom:none;margin-bottom:0;">评论管理</h2>
       <div class="comment-toolbar">
-        <div class="filters">
-          <button
-            v-for="f in statusFilters"
-            :key="f.value"
-            :class="{ active: activeStatus === f.value }"
-            type="button"
-            @click="setStatusFilter(f.value)"
-          >{{ f.label }}</button>
-        </div>
+        <p class="hint">评论即时展示、无需审核，你可以直接回复或删除。</p>
         <div class="keyword-box">
           <input v-model="keyword" type="search" placeholder="搜作者或内容…" aria-label="搜索评论" @keyup.enter="search">
           <button class="btn" type="button" @click="search">搜索</button>
@@ -131,7 +91,6 @@ onMounted(() => { load(); loadCounts() })
               </span>
               <span v-if="c.parentId" class="c-replyto">回复 @{{ c.parentAuthor || '未知' }}</span>
               <span class="c-date">{{ c.date }}</span>
-              <span class="c-status" :class="'st-' + c.status">{{ statusLabel[c.status] }}</span>
             </div>
             <p class="c-content">{{ c.content }}</p>
             <div class="c-meta">
@@ -144,8 +103,6 @@ onMounted(() => { load(); loadCounts() })
             </div>
           </div>
           <div class="c-actions">
-            <button v-if="c.status !== 'approved'" class="ok" type="button" @click="setStatus(c, 'approved')">通过</button>
-            <button v-if="c.status !== 'rejected'" class="warn" type="button" @click="setStatus(c, 'rejected')">驳回</button>
             <button type="button" @click="toggleReply(c)">{{ replyFor?.id === c.id ? '取消' : '回复' }}</button>
             <button class="danger" type="button" @click="remove(c)">删除</button>
           </div>
@@ -158,7 +115,7 @@ onMounted(() => { load(); loadCounts() })
 
         <PaginationBar :page="page" :total-pages="totalPages" @change="goPage" />
       </div>
-      <p v-else class="empty-state">没有符合条件的评论。</p>
+      <p v-else class="empty-state">还没有评论，去前台引发讨论吧。</p>
     </div>
   </div>
 </template>
@@ -170,15 +127,10 @@ onMounted(() => { load(); loadCounts() })
   gap: 12px;
   flex-wrap: wrap;
 }
-.pending-badge {
-  display: inline-block;
-  margin-left: 8px;
-  padding: 1px 8px;
-  border-radius: 10px;
-  background: #d9534f;
-  color: #fff;
-  font-size: 12px;
-  vertical-align: 2px;
+.hint {
+  margin: 0;
+  color: #9a9083;
+  font-size: 13px;
 }
 .keyword-box {
   display: flex;
@@ -229,14 +181,6 @@ onMounted(() => { load(); loadCounts() })
   color: #9a9083;
   font-size: 12px;
 }
-.c-status {
-  font-size: 12px;
-  padding: 0 6px;
-  border-radius: 4px;
-}
-.st-approved { background: #e8f0e8; color: #3a7d44; }
-.st-pending  { background: #fdf3dc; color: #a8781a; }
-.st-rejected { background: #f6e4e2; color: #b0483f; }
 .c-content {
   margin: 6px 0 4px;
   white-space: pre-wrap;
@@ -262,8 +206,6 @@ onMounted(() => { load(); loadCounts() })
   border-radius: 5px;
   cursor: pointer;
 }
-.c-actions button.ok { border-color: #3a7d44; color: #3a7d44; }
-.c-actions button.warn { border-color: #a8781a; color: #a8781a; }
 .c-actions button.danger { border-color: #b0483f; color: #b0483f; }
 .c-replybox {
   flex-basis: 100%;

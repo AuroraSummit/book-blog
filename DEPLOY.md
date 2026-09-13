@@ -256,6 +256,8 @@ sudo nginx -t && sudo nginx -s reload   # 仅改动 nginx 配置时需要
 
 - 后端端口：`8080`（nginx 反代目标）
 - 前端端口：开发 `5173`；生产为 `dist/` 静态文件
-- 环境变量：`DB_USERNAME` / `DB_PASSWORD` / `JWT_SECRET` / `ADMIN_USERNAME` / `ADMIN_PASSWORD`
+- 环境变量：`DB_USERNAME` / `DB_PASSWORD` / `JWT_SECRET` / `ADMIN_USERNAME` / `ADMIN_PASSWORD` / `MAIL_HOST` / `MAIL_PORT` / `MAIL_USERNAME` / `MAIL_PASSWORD` / `SITE_URL`
+- 说明：`MAIL_*` 仅当需要「评论回复邮件通知」才配置（未配置自动停用通知，不影响评论）；`SITE_URL` 设为你线上域名，邮件内文章链接用它拼
+- 评论反垃圾：同 IP 同文 30 秒限频（后端信任 nginx 注入的 `X-Real-IP`）+ 表单 honeypot；上线后仍建议在 nginx 确认 `proxy_set_header X-Real-IP $remote_addr;` 已生效
 - 数据库：`paper_pages`（utf8mb4），JPA 自动建表，无需手工导入 schema
 - 生产构建产物：`backend/target/paper-pages-backend-1.0.0.jar`、`frontend/dist/`

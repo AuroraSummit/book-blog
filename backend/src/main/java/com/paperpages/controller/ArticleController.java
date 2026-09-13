@@ -126,11 +126,14 @@ public class ArticleController {
         return key;
     }
 
+    /**
+     * 客户端真实 IP（用于评论限频）。
+     * 不信任 X-Forwarded-For（客户端可伪造最左值从而绕过限频）；只信任反向代理注入的
+     * X-Real-IP；直连（开发/本机）时取 remoteAddr。
+     */
     private String clientIp(HttpServletRequest request) {
-        String xff = request.getHeader("X-Forwarded-For");
-        if (xff != null && !xff.isBlank()) {
-            return xff.split(",")[0].trim();
-        }
+        String real = request.getHeader("X-Real-IP");
+        if (real != null && !real.isBlank()) return real.trim();
         return request.getRemoteAddr();
     }
 }

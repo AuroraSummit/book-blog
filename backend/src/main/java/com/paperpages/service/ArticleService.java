@@ -257,7 +257,7 @@ public class ArticleService {
         return new ArticleListItem(
                 a.getSlug(), a.getTitle(), a.getType(), a.getCategory(), a.getDate(),
                 splitTags(a.getTags()), a.getSummary(), a.getViews(),
-                commentRepository.countByArticle(a),
+                commentRepository.countByArticleAndStatus(a, "approved"),
                 likeRepository.countByArticle(a),
                 a.getStatus());
     }
@@ -267,7 +267,7 @@ public class ArticleService {
                 a.getSlug(), a.getTitle(), a.getType(), a.getCategory(), a.getDate(),
                 splitTags(a.getTags()), a.getSummary(),
                 jsonUtil.readList(a.getContent()), a.getViews(),
-                commentRepository.countByArticle(a),
+                commentRepository.countByArticleAndStatus(a, "approved"),
                 likeRepository.countByArticle(a),
                 a.getStatus(), a.getUpdatedAt());
     }

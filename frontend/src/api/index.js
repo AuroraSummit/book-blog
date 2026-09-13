@@ -57,7 +57,7 @@ export const api = {
   about: () => http.get('/about'),
   siteInfo: () => http.get('/site'),
 
-  // 评论（即时发布）
+  // 评论（匿名即时发布 + 一层回复楼，website 为 honeypot 隐藏字段）
   comments: (slug) => http.get(`/articles/${encodeURIComponent(slug)}/comments`),
   postComment: (slug, data) => http.post(`/articles/${encodeURIComponent(slug)}/comments`, data),
 
@@ -79,5 +79,12 @@ export const api = {
   adminSettings: () => http.get('/admin/settings'),
   updateSettings: (data) => http.put('/admin/settings', data),
 
-  adminStats: () => http.get('/admin/stats')
+  adminStats: () => http.get('/admin/stats'),
+
+  // 后台评论管理
+  adminComments: (params) => http.get('/admin/comments', { params }),
+  adminCommentCounts: () => http.get('/admin/comments/counts'),
+  adminReply: (data) => http.post('/admin/comments', data),
+  deleteComment: (id) => http.delete(`/admin/comments/${id}`),
+  setCommentStatus: (id, status) => http.patch(`/admin/comments/${id}/status`, null, { params: { status } })
 }

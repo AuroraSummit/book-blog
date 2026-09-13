@@ -19,6 +19,13 @@ spring:
   jackson:
     time-zone: Asia/Shanghai
 
+  # 邮件通知（可选）：未配置 MAIL_HOST 时评论回复通知自动停用，不影响其他功能
+  mail:
+    host: ${MAIL_HOST:}
+    port: ${MAIL_PORT:465}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+
 # 「纸页之间」自定义配置
 paper:
   jwt:
@@ -29,6 +36,8 @@ paper:
     # 博主账号：首次启动自动创建（密码 BCrypt 加密入库）
     username: ${ADMIN_USERNAME:admin}
     password: ${ADMIN_PASSWORD:admin123}
+  # 邮件/回复通知里的站点访问地址（评论回复邮件中的文章链接用）
+  site-url: ${SITE_URL:http://localhost:5173}
 
 logging:
   level:

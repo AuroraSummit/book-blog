@@ -68,10 +68,13 @@ mvn spring-boot:run
 | 变量 | 默认值 | 说明 |
 |---|---|---|
 | `DB_USERNAME` | `root` | 数据库用户名 |
-| `DB_PASSWORD` | `lwp20040411` | 数据库密码（请改成你自己的） |
+| `DB_PASSWORD` | （无默认） | 数据库密码，**必须通过环境变量提供** |
 | `JWT_SECRET` | 内置开发密钥 | 生产环境务必覆盖 |
 | `ADMIN_USERNAME` | `admin` | 博主账号 |
 | `ADMIN_PASSWORD` | `admin123` | 博主密码（首次启动加密入库，请尽快修改） |
+| `MAIL_HOST` / `MAIL_PORT` | 空 / 465 | 回复通知邮箱 SMTP（未配置则停用通知，不影响评论） |
+| `MAIL_USERNAME` / `MAIL_PASSWORD` | 空 | SMTP 账号密码（发件人） |
+| `SITE_URL` | `http://localhost:5173` | 邮件内文章链接的前缀（上线后改为你的域名） |
 
 ### 3. 启动前端（开发模式，默认 5173）
 ```bash
@@ -95,7 +98,7 @@ npm run dev
 - 文章详情：轻量标记渲染（`## ` 小标题、`> ` 引用）、目录大纲、阅读时长估算、上一篇/下一篇、阅读计数（会话去重）
 - 点赞：每篇可点「喜欢」，HttpOnly Cookie 标识访客去重（幂等），前台与后台均展示
 - 相关阅读：按共享标签推荐 3 篇
-- 评论区：访客即时发表（昵称/内容长度受限 + 同文 30 秒限频），发布后立即可见，无需审核
+- 评论区：访客匿名即时发表（昵称/内容长度受限 + 同 IP 同文 30 秒限频 + honeypot 反垃圾），支持一层回复楼与「博主」回复徽标；可选填邮箱，评论被回复时收到邮件通知；博主在后台可审核/驳回/删除/回复
 - 夜间模式：纸色 ↔ 深褐主题一键切换（localStorage 记忆）
 - 关于页（后台可编辑文字）
 
@@ -103,6 +106,7 @@ npm run dev
 - 登录 / 退出
 - 仪表盘：文章/草稿/评论/点赞统计卡片 + 访客趋势折线 + 发表柱状 + 标签分布饼图 + 最受欢迎（阅读 TOP5）/ 点赞榜 TOP5
 - 文章管理：全部/已发布/草稿筛选，发布、编辑、删除
+- 评论管理：按状态/关键词分页检索，通过、驳回、删除、博主回复（待审核数角标）
 - 写文章：新建/编辑（发布或存草稿），正文按行分段
 - 标签管理：标签统计、重命名（同名自动合并）、删除（从所有文章移除）
 - 站点设置：站名/副标题/公告/关于文字，保存后前台即时生效
@@ -121,8 +125,8 @@ npm run dev
 | POST | `/api/articles/{slug}/views` | 阅读计数 +1 | 公开 |
 | POST | `/api/articles/{slug}/like` | 点赞（cookie 去重，幂等） | 公开 |
 | GET | `/api/articles/{slug}/liked` | 查询已赞状态与点赞数 | 公开 |
-| GET | `/api/articles/{slug}/comments` | 评论列表（即时可见） | 公开 |
-| POST | `/api/articles/{slug}/comments` | 发表评论（限频） | 公开 |
+| GET | `/api/articles/{slug}/comments` | 评论列表（已通过，可按 parentId 组回复楼） | 公开 |
+| POST | `/api/articles/{slug}/comments` | 发表评论/回复（限频 + honeypot，可带选填 email） | 公开 |
 | GET | `/api/tags` | 标签云（含文章数） | 公开 |
 | GET | `/api/site` | 站点公开信息（站名/副标题/公告） | 公开 |
 | GET | `/api/about` | 关于文字 | 公开 |
@@ -132,6 +136,11 @@ npm run dev
 | PUT | `/api/admin/articles/{slug}` | 编辑文章 | 登录 |
 | PATCH | `/api/admin/articles/{slug}/status?status=` | 发布/转草稿 | 登录 |
 | DELETE | `/api/admin/articles/{slug}` | 删除文章（连带评论与点赞） | 登录 |
+| GET | `/api/admin/comments` | 评论分页检索（状态/文章/关键词） | 登录 |
+| GET | `/api/admin/comments/counts` | 各状态评论数 | 登录 |
+| POST | `/api/admin/comments` | 博主回复评论 | 登录 |
+| PATCH | `/api/admin/comments/{id}/status` | 通过/驳回 | 登录 |
+| DELETE | `/api/admin/comments/{id}` | 删除评论 | 登录 |
 | GET | `/api/admin/tags` | 标签管理列表 | 登录 |
 | PUT | `/api/admin/tags/{name}` | 重命名标签（同名合并） | 登录 |
 | DELETE | `/api/admin/tags/{name}` | 删除标签 | 登录 |

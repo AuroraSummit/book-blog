@@ -20,6 +20,7 @@ const routes = [
     children: [
       { path: '', name: 'admin-dashboard', component: () => import('../views/admin/DashboardView.vue'), meta: { title: '仪表盘 · 纸页之间后台' } },
       { path: 'articles', name: 'admin-articles', component: () => import('../views/admin/ArticlesView.vue'), meta: { title: '文章管理 · 纸页之间后台' } },
+      { path: 'comments', name: 'admin-comments', component: () => import('../views/admin/CommentsView.vue'), meta: { title: '评论管理 · 纸页之间后台' } },
       { path: 'write', name: 'admin-write', component: () => import('../views/admin/WriteView.vue'), meta: { title: '写文章 · 纸页之间后台' } },
       { path: 'tags', name: 'admin-tags', component: () => import('../views/admin/AdminTagsView.vue'), meta: { title: '标签管理 · 纸页之间后台' } },
       { path: 'settings', name: 'admin-settings', component: () => import('../views/admin/AdminSettingsView.vue'), meta: { title: '站点设置 · 纸页之间后台' } }

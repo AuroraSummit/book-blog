@@ -25,6 +25,7 @@ function logout() {
       <nav class="admin-side" aria-label="后台导航">
         <router-link to="/admin" exact-active-class="router-link-exact-active">仪表盘</router-link>
         <router-link to="/admin/articles">文章管理</router-link>
+        <router-link to="/admin/comments">评论管理</router-link>
         <router-link to="/admin/write">写文章</router-link>
         <router-link to="/admin/tags">标签管理</router-link>
         <router-link to="/admin/settings">站点设置</router-link>

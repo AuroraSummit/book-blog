@@ -5,9 +5,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
- * 评论实体。
- * status: pending(待审核) | approved(已通过) | rejected(已驳回)
- * 前台只展示 approved；访客提交的评论默认 pending，由博主在后台审核。
+ * 评论实体（匿名即时发布 + 回复楼 + 可选邮箱通知）。
+ * status: pending(待审核) | approved(已通过) | rejected(已驳回/前台隐藏)
+ * 访客评论默认 approved（即时展示）；博主可在后台审核、驳回或删除。
+ * 回复：parentId 指向父评论，仅允许一层（回复挂到顶层评论下）。
  */
 @Entity
 @Table(name = "comments",
@@ -34,6 +35,18 @@ public class Comment {
     @Column(nullable = false, length = 20)
     private String status = "pending";
 
+    /** 父评论 id（回复楼）；null 表示顶层评论。 */
+    @Column(name = "parent_id")
+    private Long parentId;
+
+    /** 回复通知邮箱（可选，仅在博主/他人回复时用于通知，不对外展示）。 */
+    @Column(length = 100)
+    private String email;
+
+    /** 是否博主本人发布的回复（前台显示「博主」徽标）。 */
+    @Column(name = "is_author", nullable = false)
+    private boolean authorFlag = false;
+
     @Column(nullable = false)
     private LocalDate date;
 
@@ -56,6 +69,12 @@ public class Comment {
     public void setContent(String content) { this.content = content; }
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
+    public Long getParentId() { return parentId; }
+    public void setParentId(Long parentId) { this.parentId = parentId; }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+    public boolean isAuthor() { return authorFlag; }
+    public void setAuthor(boolean author) { this.authorFlag = author; }
     public LocalDate getDate() { return date; }
     public void setDate(LocalDate date) { this.date = date; }
     public LocalDateTime getCreatedAt() { return createdAt; }

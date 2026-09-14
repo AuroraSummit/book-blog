@@ -106,9 +106,9 @@ onBeforeUnmount(() => {
           <p class="chart-title">文章发表数量 · 按月</p>
           <div id="chart-publish" style="height:240px;"></div>
         </div>
-        <div class="chart-box">
+        <div class="chart-box chart-wide">
           <p class="chart-title">标签分布</p>
-          <div id="chart-tags" style="height:240px;"></div>
+          <div id="chart-tags" style="height:260px;"></div>
         </div>
       </div>
 
@@ -149,3 +149,7 @@ onBeforeUnmount(() => {
     <p v-else class="list-empty">加载中…</p>
   </div>
 </template>
+
+<style scoped>
+.chart-wide { grid-column: 1 / -1; }
+</style>
